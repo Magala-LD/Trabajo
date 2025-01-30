@@ -1,17 +1,27 @@
-meme_dict = {
-            "CRINGE": "Algo excepcionalmente raro o embarazoso",
-            "LOL": "Una respuesta común a algo gracioso",
-            "ROFL": "una respuesta a una broma",
-            "SHEESH": "ligera desaprobacion", 
-            "CREEPY": "atterador, siniestro o perturbador",
-            "AGGRO": "ponerse enojado o agresivo",
-            }
+import discord
 
-word = input("Escribe una palabra que no entiendas (¡con mayúsculas!): ")
 
-if word in meme_dict.keys():
-    print(meme_dict[word])
-else:
-    # ¿Qué hacer si no se encuentra la palabra?
-    print("no se encuentra la palabra que busca, intenta de nuevo")
-    print("Tip: intente escribir la palabra en mayuscula")
+class MyClient(discord.Client):
+    async def on_ready(self):
+        print(f'Logged in as {self.user} (ID: {self.user.id})')
+        print('--- Conexión exitosa con Discord ---')
+
+    async def on_message(self, message):
+        if message.content.startswith('!deleteme'):
+            # Borra el mensaje con el comando
+            await message.delete()
+
+            # Envía el mensaje que se borrará después de 3 segundos
+            msg = await message.channel.send('[este mensaje se borrara]', delete_after=3.0)
+
+
+    async def on_message_delete(self, message):
+        msg = f'{message.author} has deleted the message: {message.content}'
+        await message.channel.send(msg)
+
+
+intents = discord.Intents.default()
+intents.message_content = True
+
+client = MyClient(intents=intents)
+client.run('token')
